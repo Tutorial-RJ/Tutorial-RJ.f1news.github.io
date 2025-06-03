@@ -204,6 +204,11 @@
         class="relative flex size-full min-h-screen flex-col bg-[#111714] dark group/design-root overflow-x-hidden"
         style="font-family: 'Space Grotesk', 'Noto Sans', sans-serif"
     >
+        <audio id="background-music" loop>
+            <source src="assets/background_music.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
         <div id="loading-overlay" class="loading-overlay">
             <div class="loading-spinner"></div>
         </div>
@@ -279,6 +284,16 @@
                 <div class="mb-6 flex flex-wrap gap-4 tab-buttons-container">
                     <button id="tab-driver-btn" class="tab-button active">DRIVER</button>
                     <button id="tab-races-btn" class="tab-button">RACES</button>
+                    <div class="flex items-center gap-2 ml-4">
+                        <button id="music-toggle-btn" class="text-[#9EB7A8] hover:text-white focus:outline-none">
+                            <svg id="speaker-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4L8 8H4V16H8L12 20V4ZM14 6V18C16.37 17.13 18 15.22 18 13C18 10.78 16.37 8.87 14 8V6ZM20 12C20 9.8 19.14 7.82 17.75 6.25L16.34 7.66C17.26 8.58 18 9.77 18 11C18 12.23 17.26 13.42 16.34 14.34L17.75 15.75C19.14 14.18 20 12.2 20 10V12Z"/>
+                            </svg>
+                            <svg id="pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 19H10V5H6V19ZM14 5V19H18V5H14Z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="driver-dashboard" class="tab-content active">
@@ -1095,6 +1110,12 @@
     const sidebarClose = document.getElementById('sidebar-close');   // Mobile close button
     const sidebarOverlay = document.getElementById('sidebar-overlay'); // Mobile overlay
 
+    // Music Player Elements
+    const backgroundMusic = document.getElementById('background-music');
+    const musicToggleBtn = document.getElementById('music-toggle-btn');
+    const speakerIcon = document.getElementById('speaker-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+
     let currentDriverId = driversData[0].id; // Track current driver by ID
     let liveRaceInterval;
     let isLiveRaceActive = false;
@@ -1484,6 +1505,27 @@
         sidebarEl.classList.remove('open');
         sidebarOverlay.classList.remove('active');
     });
+
+    // Music Player Toggle Functionality
+    function toggleMusicPlayback() {
+        if (backgroundMusic.paused) {
+            backgroundMusic.play()
+                .then(() => {
+                    speakerIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error("Error playing music:", error);
+                    alert("Autoplay prevented. Please interact with the page first or check browser settings.");
+                });
+        } else {
+            backgroundMusic.pause();
+            speakerIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+        }
+    }
+    musicToggleBtn.addEventListener('click', toggleMusicPlayback);
+
 
     // Initial load
     populateDriverButtons(); // Call the new function to populate buttons
